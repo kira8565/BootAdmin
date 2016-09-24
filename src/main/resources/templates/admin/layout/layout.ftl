@@ -20,7 +20,100 @@
     <!-- CSS App -->
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/themes/flat-blue.css">
+
+    <!-- Javascript Libs -->
+    <script type="text/javascript" src="/lib/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/lib/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/lib/js/Chart.min.js"></script>
+    <script type="text/javascript" src="/lib/js/bootstrap-switch.min.js"></script>
+
+    <script type="text/javascript" src="/lib/js/jquery.matchHeight-min.js"></script>
+    <script type="text/javascript" src="/lib/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/lib/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/lib/js/select2.full.min.js"></script>
+    <script type="text/javascript" src="/lib/js/ace/ace.js"></script>
+    <script type="text/javascript" src="/lib/js/ace/mode-html.js"></script>
+    <script type="text/javascript" src="/lib/js/ace/theme-github.js"></script>
+    <!-- Javascript -->
 </head>
+
+
+<script>
+    function initList(dataSet,columns) {
+        var selected = [];
+        var table = $('#tb').dataTable({
+            "data":dataSet,
+            "columns": columns,
+            "aoColumnDefs": [//设置列的属性，此处设置第一列不排序
+                {"class": "tn", "targets": [0]},
+                {
+                    "targets": -1,
+                    "class": "but_xq",
+                    "data": null,
+                    "bSortable": false,
+                    "defaultContent": "<p><a id=\"edit\" href=\"#\">修改</a>&nbsp;&nbsp;&nbsp;&nbsp;<a id=\"del\"  href=\"#\">删除</a></p>"
+                }
+            ],
+            "aaSorting": [[0, "desc"]], //给列表排序 ，第一个参数表示数组 (由0开始)。1 表示Browser列。第二个参数为 desc或是asc
+            "oLanguage": {//插件的汉化
+                "sLengthMenu": "每页显示 _MENU_ 条记录",
+                "sZeroRecords": "抱歉， 没有找到",
+                "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                "sInfoEmpty": "没有数据",
+                "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                },
+                "sZeroRecords": "没有检索到数据",
+                "sProcessing": "<img src='' />",
+                "sSearch": "搜索"
+            },
+            "rowCallback": function (row, data) {//添加单击事件，改变行的样式
+                if ($.inArray(data.DT_RowId, selected) !== -1) {
+                    $(row).addClass('selected');
+                }
+            },
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "全部"]]
+        });
+
+        $("#tb tr").slice(1).each(function (g) {
+            var p = this;
+            $(this).children().slice(1).click(function () {
+                $($(p).children()[0]).children().each(function () {
+                    if (this.type == "checkbox") {
+                        if (!this.checked) {
+                            this.checked = true;
+                        } else {
+                            this.checked = false;
+                        }
+                    }
+                });
+            });
+        });
+
+
+        /**
+         * 修改
+         */
+        $('a#edit').on('click', 'a#edit', function () {
+            var data = $('#tb').DataTable().row($(this).parents('tr')).data();
+            alert("查看修改：" + data[1] + "," + data[2]);
+        });
+
+        /**
+         * 删除
+         */
+        $('a#del').click(function () {
+            var data = $('#tb').DataTable().row($(this).parents('tr')).data();
+            alert("删除：" + data[1] + "," + data[2]);
+        });
+    }
+
+</script>
+
 
 <body class="flat-blue">
 <div class="app-container">
@@ -28,7 +121,7 @@
         <nav class="navbar navbar-default navbar-fixed-top navbar-top">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <#--<button type="button" class="navbar-expand-toggle">-->
+                <#--<button type="button" class="navbar-expand-toggle">-->
                         <#--<i class="fa fa-bars icon"></i>-->
                     <#--</button>-->
                     <#--<ol class="breadcrumb navbar-breadcrumb">-->
@@ -44,7 +137,8 @@
                         <i class="fa fa-times icon"></i>
                     </button>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-comments-o"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false"><i class="fa fa-comments-o"></i></a>
                         <ul class="dropdown-menu animated fadeInDown">
                             <li class="message">
                                 <a href="/admin/logout">登出</a>
@@ -112,22 +206,7 @@
             <span class="pull-right">2.1 <a href="#"><i class="fa fa-long-arrow-up"></i></a></span> © 2015 Copyright.
         </div>
     </footer>
-    <div>
-        <!-- Javascript Libs -->
-        <script type="text/javascript" src="/lib/js/jquery.min.js"></script>
-        <script type="text/javascript" src="/lib/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="/lib/js/Chart.min.js"></script>
-        <script type="text/javascript" src="/lib/js/bootstrap-switch.min.js"></script>
 
-        <script type="text/javascript" src="/lib/js/jquery.matchHeight-min.js"></script>
-        <script type="text/javascript" src="/lib/js/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="/lib/js/dataTables.bootstrap.min.js"></script>
-        <script type="text/javascript" src="/lib/js/select2.full.min.js"></script>
-        <script type="text/javascript" src="/lib/js/ace/ace.js"></script>
-        <script type="text/javascript" src="/lib/js/ace/mode-html.js"></script>
-        <script type="text/javascript" src="/lib/js/ace/theme-github.js"></script>
-        <!-- Javascript -->
-        <script type="text/javascript" src="/js/app.js"></script>
 </body>
 
 </html>
