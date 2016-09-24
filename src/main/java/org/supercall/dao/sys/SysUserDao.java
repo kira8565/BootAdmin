@@ -8,6 +8,6 @@ import org.supercall.model.SysUser;
 @Repository
 public interface SysUserDao extends CrudRepository<SysUser, Integer> {
 
-    @Query("from SysUser as a where a.name=?")
+    @Query("from SysUser as a where a.name=?1")
     SysUser findByNameEquals(String userName);
 }

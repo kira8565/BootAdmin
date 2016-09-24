@@ -7,8 +7,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.RememberMeConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.supercall.security.CustomAuthenticationProvider;
+import org.supercall.security.MenuInitHandler;
 
 @Configurable
 @EnableWebSecurity
@@ -24,17 +26,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
+    @Autowired
+    MenuInitHandler menuInitHandler;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        RememberMeConfigurer<HttpSecurity> rs = http.authorizeRequests()
                 .antMatchers("/", "/css/**", "/img/**", "/js/**", "/lib/**").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .anyRequest().fullyAuthenticated()
                 .and()
                 .formLogin()
+                .successHandler(menuInitHandler)
                 .loginPage("/admin/")
-                .successForwardUrl("/admin/index")
-                .failureUrl("/admin/?error")
+                .failureUrl("/admin/")
                 .usernameParameter("username")
                 .permitAll()
                 .and()
