@@ -13,6 +13,8 @@ public class SysMenu {
     private String urls;
     private String icons;
     private Integer parentid;
+    private Integer level;
+    private Integer pid;
 
     @Id
     @Column(name = "id")
@@ -86,5 +88,25 @@ public class SysMenu {
 
     public void setParentid(Integer parentid) {
         this.parentid = parentid;
+    }
+
+    @Basic
+    @Column(name = "level")
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    @Basic
+    @Column(name = "pid")
+    public Integer getPid() {
+        return pid;
+    }
+
+    public void setPid(Integer pid) {
+        this.pid = pid;
     }
 }
