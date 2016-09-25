@@ -113,7 +113,7 @@
             if (no < 1) {
                 no = 1;
             }
-            qForm.page.value = no;
+            qForm.page.value = no-1;
             qForm.action = "${toURL}";
             qForm.submit();
         }

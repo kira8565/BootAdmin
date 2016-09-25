@@ -1,6 +1,9 @@
 package org.supercall.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by kira on 2016/9/24.
@@ -12,7 +15,6 @@ public class SysMenu {
     private String name;
     private String urls;
     private String icons;
-    private Integer parentid;
     private Integer level;
     private Integer pid;
 
@@ -28,6 +30,8 @@ public class SysMenu {
 
     @Basic
     @Column(name = "name")
+    @NotNull
+    @NotEmpty
     public String getName() {
         return name;
     }
@@ -38,6 +42,8 @@ public class SysMenu {
 
     @Basic
     @Column(name = "urls")
+    @NotNull
+    @NotEmpty
     public String getUrls() {
         return urls;
     }
@@ -78,16 +84,6 @@ public class SysMenu {
         result = 31 * result + (urls != null ? urls.hashCode() : 0);
         result = 31 * result + (icons != null ? icons.hashCode() : 0);
         return result;
-    }
-
-    @Basic
-    @Column(name = "parentid")
-    public Integer getParentid() {
-        return parentid;
-    }
-
-    public void setParentid(Integer parentid) {
-        this.parentid = parentid;
     }
 
     @Basic

@@ -16,7 +16,8 @@
                         <label for="exampleInputName2">菜单名称</label>
                         <input type="text" class="form-control" name="name" value="${RequestParameters['name']!''}">
                     </div>
-                    <button type="submit" class="btn btn-default">搜索</button>
+                    <button type="submit" class="btn btn-success">搜索</button>
+                    <a href="add" class="btn btn-default">新增</a>
                 </form>
                 <hr/>
                 <table class="datatable table table-striped table-bordered table-hover" cellspacing="0" width="100%">
@@ -25,6 +26,7 @@
                         <th>菜单名称</th>
                         <th>菜单图标</th>
                         <th>菜单地址</th>
+                        <th style="width: 15%;">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -33,6 +35,10 @@
                             <td>${obj.name!''}</td>
                             <td>${obj.icons!''}</td>
                             <td>${obj.urls!''}</td>
+                            <td>
+                                <a href="edit?id=${obj.id}" class="btn btn-info ">编辑</a>
+                                <a href="delete?id=${obj.id}" class="btn btn-danger ">删除</a>
+                            </td>
                         </tr>
                         </#list>
                     </tbody>
