@@ -11,3 +11,8 @@
 Velocity，结果1.4开始被弃用了，那就Freemaker吧。。反正也用过
 * FastJson：比Gson好用些，Gson有些奇奇怪挂的Bug在这个库没碰到过
 * MySQL：这个就。。没什么好说的了，不过开发的时候用的MariaDB
+
+# 预览
+
+![Alt text](./img/login.png)
+![Alt text](./img/list.png)
