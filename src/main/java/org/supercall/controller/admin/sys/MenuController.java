@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.supercall.controller.admin.common.BaseController;
 import org.supercall.dao.sys.SysMenuDao;
 import org.supercall.model.SysMenu;
 
@@ -21,10 +22,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/admin/sys/menu")
-public class MenuController {
+public class MenuController extends BaseController {
 
     String prefix = "admin/sys/menu/";
 
@@ -37,32 +39,10 @@ public class MenuController {
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "id") String sortfields,
             @RequestParam(required = false, defaultValue = "desc") String sortType,
-            @RequestParam(required = false) String name,
+            HttpServletRequest request,
             Model model) {
-        Specification<SysMenu> specifications = new Specification<SysMenu>() {
-            @Override
-            public Predicate toPredicate(Root<SysMenu> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                Predicate predicate = null;
-                if (!Strings.isNullOrEmpty(name)) {
-                    predicate = criteriaBuilder.like(root.get("name").as(String.class), "%" + name + "%");
-                }
-                return predicate;
-            }
-        };
-
-        Sort sort;
-        if (sortType.equals("desc")) {
-            sort = new Sort(Sort.Direction.DESC, sortfields);
-        } else {
-            sort = new Sort(Sort.Direction.ASC, sortfields);
-        }
-        PageRequest pages = new PageRequest(page, size, sort);
-        Page<SysMenu> result = sysMenuDao.findAll(specifications, pages);
-        model.addAttribute("list", result.getContent());
-        model.addAttribute("_totalPages", result.getTotalPages());
-        model.addAttribute("_totalRecord", result.getTotalElements());
-        model.addAttribute("_size", result.getSize());
-        model.addAttribute("_number", result.getNumber());
+        PageRequest pages = new PageRequest(page, size, buildSort(sortType, sortfields));
+        initListData(sysMenuDao.findAll(buildSpecification(request), pages), model);
         return prefix + "index";
     }
 }
