@@ -32,6 +32,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/sys/menu")
@@ -60,12 +61,14 @@ public class MenuController extends BaseController {
             Model model) {
         PageRequest pages = new PageRequest(page, size, buildSort(sortType, sortfields));
         initListData(sysMenuDao.findAll(buildSpecification(request), pages), model);
+        model.addAttribute("parentMenus",sysMenuDao.findParentMenus());
         return prefix + "index";
     }
 
     @RequestMapping("/add")
     public String add(HttpServletRequest request, Model model,
                       @ModelAttribute("sysMenu") SysMenu sysMenu) {
+        model.addAttribute("parentMenus",sysMenuDao.findParentMenus());
         return prefix + "add";
     }
 

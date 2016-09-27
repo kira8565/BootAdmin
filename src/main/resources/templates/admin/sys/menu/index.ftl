@@ -13,6 +13,11 @@
             <div class="card-body">
                 <form class="form-inline">
                     <div class="form-group">
+                        <label for="exampleInputName2">上级菜单</label>
+                        <#import "../../layout/select.ftl" as item>
+                        <@item.select value="${RequestParameters['pid']!''}" id="pid" datas=parentMenus key="id" text="name" headKey=" " headValue="全部"/>
+                    </div>
+                    <div class="form-group">
                         <label for="exampleInputName2">菜单名称</label>
                         <input type="text" class="form-control" name="name" value="${RequestParameters['name']!''}">
                     </div>
@@ -51,4 +56,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("select").select2();
+    });
+</script>
 </@layout>

@@ -44,7 +44,9 @@ public class BaseController {
             final Predicate[] predicate = {null};
             map.forEach((k, v) -> {
                 try {
-                    predicate[0] = criteriaBuilder.like(root.get(k).as(String.class), "%" + v + "%");
+                    if(Strings.isNullOrEmpty(v.trim())==false){
+                        predicate[0] = criteriaBuilder.like(root.get(k).as(String.class), "%" + v + "%");
+                    }
                 } catch (Exception e) {
 
                 }
