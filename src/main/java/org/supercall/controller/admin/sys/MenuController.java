@@ -80,28 +80,63 @@ public class MenuController extends BaseController {
                                   @Valid @ModelAttribute("sysMenu") SysMenu sysMenu,
                                   BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes) {
+        ModelAndView modelAndView = new ModelAndView();
         if (bindingResult.hasErrors()) {
-            return new ModelAndView(prefix + "add");
+            modelAndView.setViewName("redirect:/" + prefix + "add");
         } else {
-            ModelAndView modelAndView = new ModelAndView();
+
             try {
-
                 //默认都有二级菜单
-                if (sysMenu.getPid() == null) {
-                    sysMenu.setLevel(1);
-                } else {
-                    sysMenu.setLevel(3);
-                }
-                sysMenuDao.save(sysMenu);
-
+                prebuildSysMenuEntity(sysMenu);
                 redirectAttributes.addFlashAttribute(ConstantUtility.FLASH_SUCCESS_MESSAEG, ConstantUtility.CREATE_SUCCESS);
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute(ConstantUtility.FLASH_ERROR_MESSAEG, ConstantUtility.CREATE_FAIL);
                 e.printStackTrace();
             }
             modelAndView.setViewName("redirect:/" + prefix + "index");
-            return modelAndView;
         }
+        return modelAndView;
+    }
+
+    @RequestMapping("/edit")
+    public String edit(HttpServletRequest request, Model model,
+                       @ModelAttribute("sysMenu") SysMenu sysMenu,
+                       Integer id) {
+        model.addAttribute("parentMenus", sysMenuDao.findParentMenus());
+        model.addAttribute("entity", sysMenuDao.findOne(id));
+        return prefix + "edit";
+    }
+
+    @RequestMapping(value = "/editEntity")
+    public ModelAndView editEntity(HttpServletRequest request, Model model,
+                                  @Valid @ModelAttribute("sysMenu") SysMenu sysMenu,
+                                  BindingResult bindingResult,
+                                  RedirectAttributes redirectAttributes) {
+        ModelAndView modelAndView = new ModelAndView();
+        if (bindingResult.hasErrors()) {
+            modelAndView.setViewName("redirect:/" + prefix + "edit");
+        } else {
+
+            try {
+                prebuildSysMenuEntity(sysMenu);
+                redirectAttributes.addFlashAttribute(ConstantUtility.FLASH_SUCCESS_MESSAEG, ConstantUtility.UPDATE_SUCCESS);
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute(ConstantUtility.FLASH_ERROR_MESSAEG, ConstantUtility.UPDATE_FAIL);
+                e.printStackTrace();
+            }
+            modelAndView.setViewName("redirect:/" + prefix + "index");
+        }
+        return modelAndView;
+    }
+
+    private void prebuildSysMenuEntity(@Valid @ModelAttribute("sysMenu") SysMenu sysMenu) {
+        //默认都有二级菜单
+        if (sysMenu.getPid() == null) {
+            sysMenu.setLevel(1);
+        } else {
+            sysMenu.setLevel(3);
+        }
+        sysMenuDao.save(sysMenu);
     }
 
     @RequestMapping("/delete")
