@@ -49,7 +49,6 @@ public class BaseController {
                 } catch (Exception e) {
 
                 }
-
             });
 
             return predicate[0];

@@ -2,12 +2,15 @@ package org.supercall.controller.admin.sys;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.sun.org.apache.regexp.internal.REUtil;
 import org.apache.log4j.Logger;
+import org.hibernate.engine.internal.JoinSequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Controller;
@@ -61,9 +64,22 @@ public class MenuController extends BaseController {
             @RequestParam(required = false, defaultValue = "id") String sortfields,
             @RequestParam(required = false, defaultValue = "desc") String sortType,
             HttpServletRequest request,
+            String name, String pid,
             Model model) {
         PageRequest pages = new PageRequest(page, size, buildSort(sortType, sortfields));
-        initListData(sysMenuDao.findAll(buildSpecification(request), pages), model);
+        List<Predicate> orPredicates = Lists.newArrayList();
+
+        Specification specifications = (root, criteriaQuery, criteriaBuilder) -> {
+            Predicate predicate = null;
+            if (Strings.isNullOrEmpty(name) == false) {
+                predicate = criteriaBuilder.like(root.get("name").as(String.class), "%" + name + "%");
+            }
+            if (Strings.isNullOrEmpty(pid) == false) {
+                predicate = criteriaBuilder.equal(root.get("pid").as(Integer.class), pid);
+            }
+            return predicate;
+        };
+        initListData(sysMenuDao.findAll(specifications, pages), model);
         model.addAttribute("parentMenus", sysMenuDao.findParentMenus());
         return prefix + "index";
     }
@@ -109,9 +125,9 @@ public class MenuController extends BaseController {
 
     @RequestMapping(value = "/editEntity")
     public ModelAndView editEntity(HttpServletRequest request, Model model,
-                                  @Valid @ModelAttribute("sysMenu") SysMenu sysMenu,
-                                  BindingResult bindingResult,
-                                  RedirectAttributes redirectAttributes) {
+                                   @Valid @ModelAttribute("sysMenu") SysMenu sysMenu,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes redirectAttributes) {
         ModelAndView modelAndView = new ModelAndView();
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("redirect:/" + prefix + "edit");
