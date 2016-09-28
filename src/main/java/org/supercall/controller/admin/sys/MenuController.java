@@ -2,6 +2,7 @@ package org.supercall.controller.admin.sys;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +39,9 @@ import java.util.List;
 @RequestMapping("/admin/sys/menu")
 public class MenuController extends BaseController {
 
-    String prefix = "admin/sys/menu/";
+    private String prefix = "admin/sys/menu/";
+
+    Logger logger = Logger.getLogger(MenuController.class);
 
     @Autowired
     MenuValidator menuValidator;
@@ -61,14 +64,14 @@ public class MenuController extends BaseController {
             Model model) {
         PageRequest pages = new PageRequest(page, size, buildSort(sortType, sortfields));
         initListData(sysMenuDao.findAll(buildSpecification(request), pages), model);
-        model.addAttribute("parentMenus",sysMenuDao.findParentMenus());
+        model.addAttribute("parentMenus", sysMenuDao.findParentMenus());
         return prefix + "index";
     }
 
     @RequestMapping("/add")
     public String add(HttpServletRequest request, Model model,
                       @ModelAttribute("sysMenu") SysMenu sysMenu) {
-        model.addAttribute("parentMenus",sysMenuDao.findParentMenus());
+        model.addAttribute("parentMenus", sysMenuDao.findParentMenus());
         return prefix + "add";
     }
 
@@ -82,13 +85,37 @@ public class MenuController extends BaseController {
         } else {
             ModelAndView modelAndView = new ModelAndView();
             try {
+
+                //默认都有二级菜单
+                if (sysMenu.getPid() == null) {
+                    sysMenu.setLevel(1);
+                } else {
+                    sysMenu.setLevel(3);
+                }
                 sysMenuDao.save(sysMenu);
+
                 redirectAttributes.addFlashAttribute(ConstantUtility.FLASH_SUCCESS_MESSAEG, ConstantUtility.CREATE_SUCCESS);
-            } catch (Exception ex) {
+            } catch (Exception e) {
                 redirectAttributes.addFlashAttribute(ConstantUtility.FLASH_ERROR_MESSAEG, ConstantUtility.CREATE_FAIL);
+                e.printStackTrace();
             }
             modelAndView.setViewName("redirect:/" + prefix + "index");
             return modelAndView;
         }
+    }
+
+    @RequestMapping("/delete")
+    public ModelAndView delete(HttpServletRequest request, Model model, Integer id, RedirectAttributes redirectAttributes) {
+        ModelAndView modelAndView = new ModelAndView();
+        try {
+            sysMenuDao.delete(id);
+            redirectAttributes.addFlashAttribute(ConstantUtility.FLASH_SUCCESS_MESSAEG, ConstantUtility.DELETE_SUCCESS);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute(ConstantUtility.FLASH_SUCCESS_MESSAEG, ConstantUtility.DELETE_FAIL);
+            e.printStackTrace();
+        }
+
+        modelAndView.setViewName("redirect:/" + prefix + "index");
+        return modelAndView;
     }
 }

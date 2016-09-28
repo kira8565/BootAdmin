@@ -7,6 +7,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.supercall.common.ConstantUtility;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by kira on 2016/9/25.
- */
 public class BaseController {
 
     protected Sort buildSort(String sortType, String sortfields) {
@@ -44,7 +43,7 @@ public class BaseController {
             final Predicate[] predicate = {null};
             map.forEach((k, v) -> {
                 try {
-                    if(Strings.isNullOrEmpty(v.trim())==false){
+                    if (Strings.isNullOrEmpty(v.trim()) == false) {
                         predicate[0] = criteriaBuilder.like(root.get(k).as(String.class), "%" + v + "%");
                     }
                 } catch (Exception e) {
@@ -76,8 +75,8 @@ public class BaseController {
                 value = "";
             } else if (valueObj instanceof String[]) {
                 String[] values = (String[]) valueObj;
-                for (int i = 0; i < values.length; i++) {
-                    value = values[i] + ",";
+                for (String str : values) {
+                    value = str + ",";
                 }
                 value = value.substring(0, value.length() - 1);
             } else {
@@ -87,4 +86,5 @@ public class BaseController {
         }
         return (HashMap<String, String>) returnMap;
     }
+
 }

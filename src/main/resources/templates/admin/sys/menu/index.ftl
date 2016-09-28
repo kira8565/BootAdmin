@@ -6,9 +6,11 @@
 <#import "../../component/list/searchButton.ftl" as searchButton>
 <#import "../../component/list/addButton.ftl" as addButton>
 <#import "../../component/list/simpleTable.ftl" as simpleTable>
+<#import "../../component/list/message.ftl" as message>
 <@layout>
 <div class="row">
     <div class="col-xs-12">
+        <@message.message/>
         <div class="card">
             <@formHead.formHead title="菜单管理"/>
             <div class="card-body">
